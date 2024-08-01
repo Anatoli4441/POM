@@ -1,71 +1,31 @@
-from selenium.common import NoSuchElementException
-from selenium.webdriver.support.select import Select
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.support.ui import Select
+
 from pages.base_page import BasePage
-from pages.locators import create_locators
+from pages.locators.create_locators import sorter_select_loc, price_loc, eco_collection_filter_loc, \
+    yes_filter_option_loc
 
 
 class CollectionsPage(BasePage):
     page_url = '/collections/eco-friendly.html'
 
-    def open_page(self):
-        self.driver.get(f"{self.base_url}{self.page_url}")
-
     def get_selected_sort_option(self):
-        try:
-            sorter_element = WebDriverWait(self.driver, 10).until(
-                ec.visibility_of_element_located(create_locators.sorter_select_loc)
-            )
-            select = Select(sorter_element)
-            return select.first_selected_option.text
-        except NoSuchElementException:
-            return None
+        sorter = self.wait_for_element(sorter_select_loc)
+        return Select(sorter).first_selected_option.text
 
     def select_price_option(self):
-        try:
-            sorter_element = WebDriverWait(self.driver, 10).until(
-                ec.element_to_be_clickable(create_locators.sorter_select_loc)
-            )
-            select = Select(sorter_element)
-            select.select_by_visible_text('Price')
-        except NoSuchElementException:
-            print("Sorter select element not found or clickable.")
+        sorter = self.wait_for_element(sorter_select_loc)
+        Select(sorter).select_by_value('price')
 
     def select_product_name_option(self):
-        try:
-            sorter_element = WebDriverWait(self.driver, 10).until(
-                ec.element_to_be_clickable(create_locators.sorter_select_loc)
-            )
-            select = Select(sorter_element)
-            select.select_by_visible_text('Product Name')
-        except NoSuchElementException:
-            print("Sorter select element not found or clickable.")
+        sorter = self.wait_for_element(sorter_select_loc)
+        Select(sorter).select_by_value('name')
 
     def get_product_prices(self):
-        try:
-            price_elements = WebDriverWait(self.driver, 10).until(
-                ec.presence_of_all_elements_located(create_locators.price_loc)
-            )
-            return [float(price.text.replace('$', '').replace(',', '').strip()) for price in price_elements if
-                    price.text]
-        except NoSuchElementException:
-            return []
+        prices = self.find_all(price_loc)
+        return [float(price.text[1:]) for price in prices if price.text]
 
     def click_eco_collection(self):
-        try:
-            eco_collection_element = WebDriverWait(self.driver, 10).until(
-                ec.element_to_be_clickable(create_locators.eco_collection_filter_loc)
-            )
-            eco_collection_element.click()
-        except NoSuchElementException:
-            print("Eco collection filter element not found or clickable.")
+        self.wait_for_element(eco_collection_filter_loc).click()
 
     def is_yes_filter_present(self):
-        try:
-            WebDriverWait(self.driver, 10).until(
-                ec.visibility_of_element_located(create_locators.yes_filter_option_loc)
-            )
-            return True
-        except NoSuchElementException:
-            return False
+        self.assert_element_visible(yes_filter_option_loc)
