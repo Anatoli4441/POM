@@ -13,12 +13,10 @@ class CollectionsPage(BasePage):
 
     @allure.step('Select price option')
     def select_price_option(self):
-        # Используем уточнение локатора для выбора первого элемента
         self.page.locator('select.sorter-options').nth(0).select_option('price')
 
     @allure.step('Select product name option')
     def select_product_name_option(self):
-        # Используем уточнение локатора для выбора первого элемента
         self.page.locator('select.sorter-options').nth(0).select_option('name')
 
     @allure.step('Get product prices')
@@ -35,10 +33,21 @@ class CollectionsPage(BasePage):
                     continue
         return prices
 
+    @allure.step('Verify sort option')
+    def verify_sort_option(self, expected_option):
+        selected_option = self.get_selected_sort_option()
+        self.verify_text(selected_option, expected_option)
+
+    @allure.step('Verify product prices sorted by price')
+    def verify_product_prices_sorted(self):
+        product_prices = self.get_product_prices()
+        sorted_prices = sorted(product_prices)
+        assert product_prices == sorted_prices, "Products should be sorted by price in ascending order."
+
     @allure.step('Click on eco collection')
     def click_eco_collection(self):
         self.page.locator(Loc.ECO_COLLECTION_FILTER).click()
 
-    @allure.step('Check if yes filter is present')
-    def is_yes_filter_present(self):
+    @allure.step('Verify "Yes" filter is present')
+    def verify_yes_filter_present(self):
         self.assert_element_visible(Loc.YES_FILTER_OPTION)

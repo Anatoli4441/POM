@@ -18,10 +18,15 @@ class CustomerAccountCreatePage(BasePage):
     def create_account(self):
         self.page.locator(Loc.CREATE_ACCOUNT_BUTTON).click()
 
-    @allure.step('Check if account was created successfully')
-    def is_account_created_successfully(self):
+    @allure.step('Verify account creation success')
+    def verify_account_creation_success(self):
         self.assert_element_visible(Loc.SUCCESS_MESSAGE)
 
     @allure.step('Get field error message')
     def get_field_error_message(self, locator):
         return self.page.locator(locator).inner_text().strip()
+
+    @allure.step('Verify field error message')
+    def verify_field_error_message(self, locator, expected_message):
+        actual_message = self.get_field_error_message(locator)
+        self.verify_text(actual_message, expected_message)

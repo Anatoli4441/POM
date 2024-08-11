@@ -6,12 +6,12 @@ import allure
 class SalePage(BasePage):
     page_url = '/sale.html'
 
-    @allure.step('Check if mens deals are present')
-    def is_mens_deals_present(self):
+    @allure.step('Verify mens deals are present')
+    def verify_mens_deals_present(self):
         self.assert_element_visible(Loc.MENS_DEALS_TITLE)
 
-    @allure.step('Check if gear deals are present')
-    def is_gear_deals_present(self):
+    @allure.step('Verify gear deals are present')
+    def verify_gear_deals_present(self):
         self.assert_element_visible(Loc.GEAR_DEALS_TITLE)
 
     @allure.step('Click on shop women’s deals')
